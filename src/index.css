@@ -3,6 +3,14 @@
 @tailwind utilities;
 @import 'antd/dist/antd.css';
 
-.ant-btn-primary {
-   background-color: #1890ff !important;
+.page-title {
+   @apply text-3xl font-medium;
+}
+
+.ant-btn-loading-icon {
+   @apply !flex items-center justify-center w-fit;
+}
+
+.ant-message-custom-content {
+   @apply !flex items-center justify-center;
 }

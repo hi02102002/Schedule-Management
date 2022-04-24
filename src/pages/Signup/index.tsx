@@ -1,57 +1,75 @@
 import { Button, Form, Input, message, Typography } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
-import { login, userSelector } from 'features/auth';
-import { useAppDispatch, useAppSelector } from 'hooks';
+import axios from 'axios';
+import { BASE_API_URL } from 'constant';
 import { IMAGES } from 'images';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-const Login = () => {
-   const [form] = useForm();
-   const dispatch = useAppDispatch();
+const Signup = () => {
    const [loading, setLoading] = useState<boolean>(false);
+   const [form] = useForm();
    const navigate = useNavigate();
-   const user = useAppSelector(userSelector);
-
-   useEffect(() => {
-      if (user?.accessToken) {
-         navigate('/', {
-            replace: true,
-         });
-      }
-   }, [user?.accessToken, navigate]);
-
    return (
       <div className="h-screen  flex items-center justify-center bg-slate-100 flex-col gap-6 ">
          <img src={IMAGES.Logo} alt="" />
          <div className="bg-white p-8 rounded-lg w-full max-w-xl shadow">
             <Typography.Title className="!font-bold text-center">
-               Login
+               Signup
             </Typography.Title>
             <Form
                layout="vertical"
                className="flex flex-col gap-4"
                form={form}
                onFinish={async (values) => {
-                  setLoading(true);
-                  const action = await dispatch(
-                     login({
+                  if (values.password.trim().length < 8) {
+                     form.setFields([
+                        {
+                           name: 'password',
+                           errors: ['Password at least 8 letter'],
+                        },
+                     ]);
+                     return;
+                  }
+                  if (values.password !== values.confirmPassword) {
+                     form.setFields([
+                        {
+                           name: 'confirmPassword',
+                           errors: ["Password don't match"],
+                        },
+                     ]);
+                     return;
+                  }
+                  try {
+                     setLoading(true);
+                     await axios.post(`${BASE_API_URL}auth/signup`, {
                         userName: values.username,
                         password: values.password,
-                     })
-                  );
-                  if (login.fulfilled.match(action)) {
+                        fullName: values.fullName,
+                        roles: ['admin'],
+                     });
                      setLoading(false);
-                     message.success('Login successfully!');
-                     form.resetFields();
-                  }
-
-                  if (login.rejected.match(action)) {
+                     message.success('Registered successfully!');
+                     navigate('/login');
+                  } catch (error: any) {
                      setLoading(false);
-                     message.error(action.payload);
+                     message.error(error.response.data.message);
                   }
                }}
             >
+               <Form.Item
+                  label="Full name"
+                  name="fullName"
+                  rules={[
+                     {
+                        required: true,
+                        message: 'Please enter full name',
+                     },
+                  ]}
+                  className="mb-0"
+               >
+                  <Input />
+               </Form.Item>
                <Form.Item
                   label="Username"
                   name="username"
@@ -78,21 +96,34 @@ const Login = () => {
                >
                   <Input type="password" />
                </Form.Item>
+               <Form.Item
+                  label="Confirm password"
+                  name="confirmPassword"
+                  rules={[
+                     {
+                        required: true,
+                        message: 'Please enter confirm password',
+                     },
+                  ]}
+                  className="mb-0"
+               >
+                  <Input type="password" />
+               </Form.Item>
                <Button
                   type="primary"
                   htmlType="submit"
                   className="w-full cursor-pointer !bg-gradient-to-r border-0 border-transparent from-[#ff9b44] to-[#fc6075] hover:bg-gradient-to-r flex items-center justify-center h-11"
                   loading={loading}
                >
-                  Login
+                  Register
                </Button>
             </Form>
             <Typography.Text className="mt-4 block text-center">
-               Don't have an account yet? <Link to="/signup">Register</Link>
+               Already have an account? <Link to="/login">Login</Link>
             </Typography.Text>
          </div>
       </div>
    );
 };
 
-export default Login;
+export default Signup;

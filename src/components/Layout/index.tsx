@@ -1,0 +1,24 @@
+import Header from 'components/Header';
+import RequireAuth from 'components/RequireAuth';
+import Sidebar from 'components/Sidebar';
+import React from 'react';
+
+interface Props {
+   children?: React.ReactNode;
+}
+
+const Layout: React.FC<Props> = ({ children }) => {
+   return (
+      <RequireAuth>
+         <div>
+            <Header />
+            <div className="flex">
+               <Sidebar />
+               <main className="p-4 flex-1">{children}</main>
+            </div>
+         </div>
+      </RequireAuth>
+   );
+};
+
+export default Layout;
