@@ -14,13 +14,11 @@ const Sidebar = () => {
                      >
                         <NavLink
                            to={item.path}
-                           className={(isActive) =>
-                              `flex items-center gap-x-4 w-full py-2 px-4 ${
-                                 isActive
-                                    ? 'bg-slate-50 text-[#ff9b44] hover:text-[#ff9b44]'
-                                    : ''
-                              }`
-                           }
+                           className={({ isActive }) => {
+                              return `flex items-center gap-x-4 w-full py-2 px-4  hover:!text-[#ff9b44] ${
+                                 isActive ? 'bg-slate-50 text-[#ff9b44] ' : ''
+                              }`;
+                           }}
                         >
                            <item.icon className="w-6 h-6" />
                            <p className="leading-[1] text-lg font-medium">

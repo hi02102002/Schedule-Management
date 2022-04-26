@@ -1,4 +1,4 @@
-import { Breadcrumb, Typography } from 'antd';
+import { Typography } from 'antd';
 import { userSelector } from 'features/auth';
 import { useAppSelector } from 'hooks';
 import React from 'react';
@@ -17,13 +17,6 @@ const Home = () => {
             <Typography.Title level={3}>
                Welcome {user?.fullName}!
             </Typography.Title>
-            <div>
-               {/* @ts-ignore */}
-               <Breadcrumb>
-                  {/* @ts-ignore */}
-                  <Breadcrumb.Item>Home</Breadcrumb.Item>
-               </Breadcrumb>
-            </div>
          </div>
          <div className="flex flex-1 ">
             <div className="flex gap-x-4 w-full items-start justify-center">

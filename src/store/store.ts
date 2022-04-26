@@ -5,6 +5,8 @@ import {
    ThunkAction,
 } from '@reduxjs/toolkit';
 import { authReducer } from 'features/auth';
+import { courseReducer } from 'features/course';
+import { roomReducer } from 'features/room';
 import {
    FLUSH,
    PAUSE,
@@ -24,6 +26,8 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
    auth: authReducer,
+   room: roomReducer,
+   course: courseReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

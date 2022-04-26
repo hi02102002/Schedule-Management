@@ -12,3 +12,17 @@ export interface IRes<T> {
    message: string;
    data: T;
 }
+
+export interface IRoom {
+   id: number;
+   roomName: string;
+   capacity: number;
+}
+
+export interface ICourse {
+   courseName: string;
+   schedule: '1' | '2' | '3';
+   amount: number;
+   roomid: number;
+   id: number;
+}

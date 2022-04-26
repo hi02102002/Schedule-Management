@@ -1,87 +1,60 @@
 import { Button, Form, Input, message, Typography } from 'antd';
-import { useForm } from 'antd/lib/form/Form';
 import axios from 'axios';
 import { BASE_API_URL } from 'constant';
 import { userSelector } from 'features/auth';
 import { useAppSelector } from 'hooks';
 import { IMAGES } from 'images';
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-const Signup = () => {
+const ForgotPassword = () => {
+   const navigation = useNavigate();
    const [loading, setLoading] = useState<boolean>(false);
-   const [form] = useForm();
-   const navigate = useNavigate();
    const user = useAppSelector(userSelector);
 
    useEffect(() => {
       if (user) {
-         navigate('/', {
+         navigation('/', {
             replace: true,
          });
       }
-   }, [user, navigate]);
+   }, [user, navigation]);
 
    return (
       <div className="h-screen  flex items-center justify-center bg-slate-100 flex-col gap-6 ">
          <img src={IMAGES.Logo} alt="" />
          <div className="bg-white p-8 rounded-lg w-full max-w-xl shadow">
             <Typography.Title className="!font-bold text-center">
-               Signup
+               Login
             </Typography.Title>
             <Form
                layout="vertical"
                className="flex flex-col gap-4"
-               form={form}
                onFinish={async (values) => {
-                  if (values.password.trim().length < 8) {
-                     form.setFields([
-                        {
-                           name: 'password',
-                           errors: ['Password at least 8 letter'],
-                        },
-                     ]);
-                     return;
-                  }
-                  if (values.password !== values.confirmPassword) {
-                     form.setFields([
-                        {
-                           name: 'confirmPassword',
-                           errors: ["Password don't match"],
-                        },
-                     ]);
-                     return;
-                  }
+                  setLoading(true);
                   try {
-                     setLoading(true);
-                     await axios.post(`${BASE_API_URL}auth/signup`, {
-                        userName: values.username,
-                        password: values.password,
-                        fullName: values.fullName,
-                        roles: ['admin'],
-                     });
+                     await axios.post(
+                        `${BASE_API_URL}auth/forgot-password`,
+                        {
+                           newPassword: values.newPassword,
+                           confirmPassword: values.confirmPassword,
+                        },
+                        {
+                           params: {
+                              username: values.username,
+                           },
+                        }
+                     );
                      setLoading(false);
-                     message.success('Registered successfully!');
-                     navigate('/login');
+                     message.success('Change password successfully');
+                     navigation('/login');
                   } catch (error: any) {
                      setLoading(false);
+                     console.dir(error.response.data.message);
                      message.error(error.response.data.message);
                   }
                }}
             >
-               <Form.Item
-                  label="Full name"
-                  name="fullName"
-                  rules={[
-                     {
-                        required: true,
-                        message: 'Please enter full name',
-                     },
-                  ]}
-                  className="mb-0"
-               >
-                  <Input />
-               </Form.Item>
                <Form.Item
                   label="Username"
                   name="username"
@@ -96,12 +69,16 @@ const Signup = () => {
                   <Input />
                </Form.Item>
                <Form.Item
-                  label="Password"
-                  name="password"
+                  label="New password"
+                  name="newPassword"
                   rules={[
                      {
                         required: true,
                         message: 'Please enter password',
+                     },
+                     {
+                        min: 8,
+                        message: 'Password at least 8 letter',
                      },
                   ]}
                   className="mb-0"
@@ -111,31 +88,51 @@ const Signup = () => {
                <Form.Item
                   label="Confirm password"
                   name="confirmPassword"
+                  dependencies={['newPassword']}
                   rules={[
                      {
                         required: true,
                         message: 'Please enter confirm password',
                      },
+                     ({ getFieldValue }) => ({
+                        validator(rule, value) {
+                           if (
+                              !value ||
+                              getFieldValue('newPassword') === value
+                           ) {
+                              return Promise.resolve();
+                           }
+                           return Promise.reject(
+                              'The two passwords that you entered do not match!'
+                           );
+                        },
+                     }),
                   ]}
                   className="mb-0"
                >
                   <Input type="password" />
                </Form.Item>
-               <Button
-                  type="primary"
-                  htmlType="submit"
-                  className="w-full cursor-pointer !bg-gradient-to-r border-0 border-transparent from-[#ff9b44] to-[#fc6075] hover:bg-gradient-to-r flex items-center justify-center h-11"
-                  loading={loading}
-               >
-                  Register
-               </Button>
+               <div className="flex items-center justify-end gap-4">
+                  <Button
+                     onClick={() => {
+                        navigation(-1);
+                     }}
+                  >
+                     Return
+                  </Button>
+                  <Button
+                     type="primary"
+                     htmlType="submit"
+                     className="bg-[#1890ff]"
+                     loading={loading}
+                  >
+                     Change password
+                  </Button>
+               </div>
             </Form>
-            <Typography.Text className="mt-4 block text-center">
-               Already have an account? <Link to="/login">Login</Link>
-            </Typography.Text>
          </div>
       </div>
    );
 };
 
-export default Signup;
+export default ForgotPassword;
