@@ -8,32 +8,6 @@ import React, { useEffect, useState } from 'react';
 import { ICourse } from 'shared/types';
 import ModalCourse from './ModalCourse';
 
-const rowSelection = {
-   onChange: (selectedRowKeys: React.Key[], selectedRows: ICourse[]) => {
-      console.log(
-         `selectedRowKeys: ${selectedRowKeys}`,
-         'selectedRows: ',
-         selectedRows
-      );
-   },
-   getCheckboxProps: (record: ICourse) => {
-      let disable = false;
-
-      if (record.amount < 15) {
-         disable = true;
-      }
-
-      if (record.amount >= 15 && record.isSchedule) {
-         disable = true;
-      }
-
-      return {
-         disabled: disable,
-         id: record.id,
-      };
-   },
-};
-
 const Course = () => {
    const { courses } = useAppSelector(coursesSelector);
    const { rooms } = useAppSelector(roomsSelector);
