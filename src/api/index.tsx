@@ -24,6 +24,13 @@ export const scheduleApis = {
          }
       );
    },
+   removeRoom: (id: number, accessToken: string) => {
+      return axios.delete(`${BASE_API_URL}room/${id}`, {
+         headers: {
+            authorization: `Bearer ${accessToken}`,
+         },
+      });
+   },
    getCourses: (accessToken: string) => {
       return axios.get<ICourse[]>(`${BASE_API_URL}course`, {
          headers: {
@@ -36,6 +43,7 @@ export const scheduleApis = {
       schedule: '1' | '2' | '3',
       amount: number,
       roomid: number,
+      duration: number,
       accessToken: string
    ) => {
       return axios.post<IRes<ICourse>>(
@@ -45,6 +53,7 @@ export const scheduleApis = {
             schedule,
             amount,
             roomid,
+            duration,
          },
          {
             headers: {
@@ -61,7 +70,7 @@ export const scheduleApis = {
       amount?: number,
       roomid?: number
    ) => {
-      return axios.patch<IRes<ICourse>>(
+      return axios.put<IRes<ICourse>>(
          `${BASE_API_URL}course/${courseId}`,
          {
             courseName,

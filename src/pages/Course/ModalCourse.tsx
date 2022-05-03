@@ -67,6 +67,7 @@ const ModalCourse: React.FC<Props> = (props) => {
                         amount: +values.amount,
                         schedule: values.schedule,
                         accessToken: user?.accessToken as string,
+                        duration: +values.duration,
                      })
                   );
                   if (addCourse.fulfilled.match(action)) {
@@ -116,6 +117,7 @@ const ModalCourse: React.FC<Props> = (props) => {
                schedule: props.value?.schedule || '1',
                amount: props.value?.amount || 1,
                roomid: props.value?.roomid || '',
+               duration: props.value?.duration || '2',
             }}
          >
             <Form.Item
@@ -145,6 +147,21 @@ const ModalCourse: React.FC<Props> = (props) => {
                   <Select.Option value="1">2-4-6</Select.Option>
                   <Select.Option value="2">3-5-7</Select.Option>
                   <Select.Option value="3">Full week</Select.Option>
+               </Select>
+            </Form.Item>
+            <Form.Item
+               label="Duration"
+               rules={[
+                  {
+                     required: true,
+                     message: 'Please enter duration',
+                  },
+               ]}
+               name="duration"
+            >
+               <Select>
+                  <Select.Option value="2">2 week</Select.Option>
+                  <Select.Option value="3">3 week</Select.Option>
                </Select>
             </Form.Item>
             <Form.Item

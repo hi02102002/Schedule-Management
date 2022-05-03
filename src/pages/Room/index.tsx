@@ -1,7 +1,7 @@
-import { Button, Table, Typography } from 'antd';
+import { Button, message, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { userSelector } from 'features/auth';
-import { getRooms, roomsSelector } from 'features/room';
+import { getRooms, removeRoom, roomsSelector } from 'features/room';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { IRoom } from 'shared/types';
@@ -33,11 +33,29 @@ const Room = () => {
       {
          title: 'Action',
          dataIndex: 'action',
-         render: () => {
+         render: (_, record) => {
             return (
                <div className="flex items-center gap-4">
                   <Button>Edit</Button>
-                  <Button className="!bg-red-500 !border-0 !text-white">
+                  <Button
+                     className="!bg-red-500 !border-0 !text-white"
+                     onClick={async () => {
+                        const action = await dispatch(
+                           removeRoom({
+                              id: record.id,
+                              accessToken: user?.accessToken as string,
+                           })
+                        );
+
+                        if (removeRoom.fulfilled.match(action)) {
+                           message.success('Remove room successfully');
+                        }
+
+                        if (removeRoom.rejected.match(action)) {
+                           message.error(action.payload);
+                        }
+                     }}
+                  >
                      Remove
                   </Button>
                </div>

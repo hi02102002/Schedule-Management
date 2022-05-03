@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { IRoom } from 'shared/types';
-import { addRoom, getRooms } from './room.actions';
+import { addRoom, getRooms, removeRoom } from './room.actions';
 
 const initialState: {
    rooms: IRoom[];
@@ -19,6 +19,11 @@ const room = createSlice({
          })
          .addCase(addRoom.fulfilled, (state, action) => {
             state.rooms.push(action.payload);
+         })
+         .addCase(removeRoom.fulfilled, (state, action) => {
+            state.rooms = state.rooms.filter(
+               (_room) => _room.id !== action.payload.id
+            );
          });
    },
 });

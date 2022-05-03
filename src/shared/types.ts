@@ -25,4 +25,7 @@ export interface ICourse {
    amount: number;
    roomid: number;
    id: number;
+   canStart: boolean;
+   duration: number;
+   isSchedule: boolean;
 }

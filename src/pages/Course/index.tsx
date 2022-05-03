@@ -8,6 +8,32 @@ import React, { useEffect, useState } from 'react';
 import { ICourse } from 'shared/types';
 import ModalCourse from './ModalCourse';
 
+const rowSelection = {
+   onChange: (selectedRowKeys: React.Key[], selectedRows: ICourse[]) => {
+      console.log(
+         `selectedRowKeys: ${selectedRowKeys}`,
+         'selectedRows: ',
+         selectedRows
+      );
+   },
+   getCheckboxProps: (record: ICourse) => {
+      let disable = false;
+
+      if (record.amount < 15) {
+         disable = true;
+      }
+
+      if (record.amount >= 15 && record.isSchedule) {
+         disable = true;
+      }
+
+      return {
+         disabled: disable,
+         id: record.id,
+      };
+   },
+};
+
 const Course = () => {
    const { courses } = useAppSelector(coursesSelector);
    const { rooms } = useAppSelector(roomsSelector);
@@ -22,32 +48,52 @@ const Course = () => {
       {
          title: 'Id',
          dataIndex: 'id',
-         key: 'id',
       },
       {
          title: 'Name',
          dataIndex: 'courseName',
-         key: 'courseName',
       },
       {
          title: 'Amount',
          dataIndex: 'amount',
-         key: 'amount',
+      },
+      {
+         title: 'Duration',
+         dataIndex: 'duration',
+         render: (_, record) => {
+            return <p>{record.duration} week</p>;
+         },
       },
       {
          title: 'Room name',
          dataIndex: 'roomName',
-         key: 'roomName',
          render: (_, record) => {
             const roomName = rooms.find((_room) => _room.id === record.roomid);
             return roomName?.roomName;
          },
       },
       {
+         title: 'Status',
+         dataIndex: 'status',
+         render: (_, record) => {
+            if (record.amount < 15) {
+               return <p>Not enough quantity</p>;
+            }
+
+            if (record.amount >= 15 && !record.isSchedule) {
+               return <p>Planning</p>;
+            }
+
+            return <p>Planned</p>;
+         },
+      },
+      {
          title: 'Action',
          dataIndex: 'action',
-         key: 'action',
          render: (_, record) => {
+            if (record.amount >= 15 && record.isSchedule) {
+               return <p>Can't edit or remove</p>;
+            }
             return (
                <div className="flex items-center gap-4">
                   <Button
@@ -119,10 +165,44 @@ const Course = () => {
          </div>
          <div>
             <Table
+               rowSelection={{
+                  type: 'checkbox',
+                  getCheckboxProps: (record) => {
+                     if (record.amount < 15) {
+                        return {
+                           disabled: true,
+                           id: record.id.toString(),
+                        };
+                     }
+
+                     if (record.amount >= 15 && !record.isSchedule) {
+                        return {
+                           disabled: false,
+                           id: record.id.toString(),
+                        };
+                     }
+
+                     return {
+                        disabled: true,
+                        id: record.id.toString(),
+                     };
+                  },
+                  onChange: (
+                     selectedRowKeys: React.Key[],
+                     selectedRows: ICourse[]
+                  ) => {
+                     console.log(
+                        `selectedRowKeys: ${selectedRowKeys}`,
+                        'selectedRows: ',
+                        selectedRows
+                     );
+                  },
+               }}
                dataSource={courses}
                columns={columns}
                loading={loading}
                pagination={false}
+               rowKey="id"
             />
          </div>
          {isModalVisible && (

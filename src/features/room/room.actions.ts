@@ -31,7 +31,27 @@ export const addRoom = createAsyncThunk<
          );
          return data.data;
       } catch (error: any) {
-         return rejectWithValue('');
+         return rejectWithValue(error.response.data.message);
       }
    }
 );
+
+export const removeRoom = createAsyncThunk<
+   { id: number },
+   {
+      id: number;
+      accessToken: string;
+   },
+   {
+      rejectValue: string;
+   }
+>('room/removeCourse', async ({ accessToken, id }, { rejectWithValue }) => {
+   try {
+      await scheduleApis.removeRoom(id, accessToken);
+      return {
+         id,
+      };
+   } catch (error: any) {
+      return rejectWithValue(error.response.data.message);
+   }
+});
