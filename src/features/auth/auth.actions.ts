@@ -1,4 +1,4 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
+import { createAction, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { BASE_API_URL } from 'constant';
 import { IRes, IUser } from '../../shared/types';
@@ -26,3 +26,5 @@ export const login = createAsyncThunk<
       return rejectWithValue('Username or password error!');
    }
 });
+
+export const logout = createAction('auth/logout');

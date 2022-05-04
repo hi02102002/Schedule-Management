@@ -1,7 +1,8 @@
 import { Typography } from 'antd';
+import { scheduleApis } from 'api';
 import { userSelector } from 'features/auth';
 import { useAppSelector } from 'hooks';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
    AiOutlineApartment,
    AiOutlineCarryOut,
@@ -11,6 +12,18 @@ import {
 
 const Home = () => {
    const user = useAppSelector(userSelector);
+   const [home, setHome] = useState<any | null>(null);
+   useEffect(() => {
+      if (user?.accessToken) {
+         scheduleApis.getHome(user.accessToken).then((value) => {
+            console.log(value.data.data);
+            setHome(value.data.data);
+         });
+      }
+   }, [user?.accessToken]);
+
+   console.log(home);
+
    return (
       <div className="h-full flex flex-col">
          <div className="mb-4">
@@ -32,19 +45,19 @@ const Home = () => {
                         <div className="flex flex-col gap-y-2 items-center text-center w-full         ">
                            <AiOutlineApartment className="w-6 h-6" />
                            <Typography.Text className="!text-inherit">
-                              Total: 5
+                              Total: {home?.totalCourse}
                            </Typography.Text>
                         </div>
                         <div className="flex flex-col gap-y-2 items-center text-center w-full">
                            <AiOutlineFileSync className="w-6 h-6" />
                            <Typography.Text className="!text-inherit">
-                              Planing: 5
+                              Planing: {home?.planing}
                            </Typography.Text>
                         </div>
                         <div className="flex flex-col gap-y-2 items-center text-center w-full">
                            <AiOutlineCarryOut className="w-6 h-6" />
                            <Typography.Text className="!text-inherit">
-                              Planed: 5
+                              Planed: {home?.planed}
                            </Typography.Text>
                         </div>
                      </div>
@@ -62,25 +75,25 @@ const Home = () => {
                         <div className="flex flex-col gap-y-2 items-center text-center w-full">
                            <AiOutlineTable className="w-6 h-6" />
                            <Typography.Text className="!text-inherit">
-                              Total: 5
+                              Total: {home?.totalRoom}
                            </Typography.Text>
                         </div>
                         <div className="flex flex-col gap-y-2 items-center text-center w-full">
                            <AiOutlineTable className="w-6 h-6" />
                            <Typography.Text className="!text-inherit">
-                              Room 20: 5
+                              Room 20: {home?.room20}
                            </Typography.Text>
                         </div>
                         <div className="flex flex-col gap-y-2 items-center text-center w-full">
                            <AiOutlineTable className="w-6 h-6" />
                            <Typography.Text className="!text-inherit">
-                              Room 30: 5
+                              Room 30: {home?.room30}
                            </Typography.Text>
                         </div>
                         <div className="flex flex-col gap-y-2 items-center text-center w-full">
                            <AiOutlineTable className="w-6 h-6" />
                            <Typography.Text className="!text-inherit">
-                              Room 40: 5
+                              Room 40: {home?.room40}
                            </Typography.Text>
                         </div>
                      </div>

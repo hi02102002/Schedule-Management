@@ -92,4 +92,11 @@ export const scheduleApis = {
          },
       });
    },
+   getHome: (accessToken: string) => {
+      return axios.get(`${BASE_API_URL}home`, {
+         headers: {
+            authorization: `Bearer ${accessToken}`,
+         },
+      });
+   },
 };

@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { IUser } from '../../shared/types';
-import { login } from './auth.actions';
+import { login, logout } from './auth.actions';
 
 const initialState: {
    user: IUser | null;
@@ -40,6 +40,9 @@ const authSlice = createSlice({
          .addCase(login.rejected, (state, action) => {
             state.login.error = action.payload as string;
             state.login.loading = false;
+         })
+         .addCase(logout, (state) => {
+            state.user = null;
          });
    },
 });
