@@ -16,7 +16,6 @@ export const addCourse = createAsyncThunk<
       courseName: string;
       schedule: '1' | '2' | '3';
       amount: number;
-      roomid: number;
       accessToken: string;
       duration: number;
    },
@@ -26,7 +25,7 @@ export const addCourse = createAsyncThunk<
 >(
    'course/addCourse',
    async (
-      { amount, courseName, roomid, schedule, accessToken, duration },
+      { amount, courseName, schedule, accessToken, duration },
       { rejectWithValue }
    ) => {
       try {
@@ -34,7 +33,6 @@ export const addCourse = createAsyncThunk<
             courseName,
             schedule,
             amount,
-            roomid,
             duration,
             accessToken
          );

@@ -19,10 +19,9 @@ const ModalCourse: React.FC<Props> = (props) => {
    const [loading, setLoading] = useState<boolean>(false);
    const { rooms } = useAppSelector(roomsSelector);
    const [roomSelect, setRoomSelect] = useState<string>(
-      props.value?.roomid.toString() || ''
+      props.value?.roomid?.toString() || ''
    );
-
-   const [capacityRoom, setCapacityRoom] = useState<number>(1);
+   const [capacityRoom, setCapacityRoom] = useState<number>(15);
 
    useEffect(() => {
       if (roomSelect.trim().length > 0) {
@@ -63,7 +62,6 @@ const ModalCourse: React.FC<Props> = (props) => {
                   const action = await dispatch(
                      addCourse({
                         courseName: values.courseName,
-                        roomid: +values.roomid,
                         amount: +values.amount,
                         schedule: values.schedule,
                         accessToken: user?.accessToken as string,
@@ -93,7 +91,6 @@ const ModalCourse: React.FC<Props> = (props) => {
                         courseId: props.value?.id as number,
                         accessToken: user?.accessToken as string,
                         ...values,
-                        roomid: +values.roomid,
                      })
                   );
 
@@ -115,8 +112,7 @@ const ModalCourse: React.FC<Props> = (props) => {
             initialValues={{
                courseName: props.value?.courseName || '',
                schedule: props.value?.schedule || '1',
-               amount: props.value?.amount || 1,
-               roomid: props.value?.roomid || '',
+               amount: props.value?.amount || 15,
                duration: props.value?.duration || '2',
             }}
          >
@@ -164,7 +160,7 @@ const ModalCourse: React.FC<Props> = (props) => {
                   <Select.Option value="3">3 week</Select.Option>
                </Select>
             </Form.Item>
-            <Form.Item
+            {/* <Form.Item
                label="Room"
                rules={[
                   {
@@ -191,27 +187,34 @@ const ModalCourse: React.FC<Props> = (props) => {
                      );
                   })}
                </Select>
+            </Form.Item> */}
+            <Form.Item
+               label={`Amount (Max: 40)`}
+               rules={[
+                  {
+                     required: true,
+                     message: 'Please enter amount',
+                  },
+                  {
+                     type: 'number',
+                     max: 40,
+                     message: 'Amount must less than 40',
+                  },
+               ]}
+               name="amount"
+            >
+               <InputNumber
+                  placeholder="Amount"
+                  min={15}
+                  max={40}
+                  step={1}
+                  value={capacityRoom}
+                  onChange={(value) => {
+                     setCapacityRoom(value);
+                  }}
+                  className="w-full"
+               />
             </Form.Item>
-            {(roomSelect.trim().length > 0 || props.value?.roomid) && (
-               <Form.Item
-                  label={`Amount (Max: ${capacityRoom})`}
-                  rules={[
-                     {
-                        required: true,
-                        message: 'Please enter amount',
-                     },
-                  ]}
-                  name="amount"
-               >
-                  <InputNumber
-                     placeholder="Amount"
-                     min={1}
-                     max={capacityRoom}
-                     step={1}
-                     className="w-full"
-                  />
-               </Form.Item>
-            )}
          </Form>
       </Modal>
    );

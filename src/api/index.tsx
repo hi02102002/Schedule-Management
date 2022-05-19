@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { BASE_API_URL } from 'constant';
-import { ICourse, IRes, IRoom } from 'shared/types';
+import { ICourse, IRes, IRoom, ISchedule } from 'shared/types';
 
 export const scheduleApis = {
    getRooms: (accessToken: string) => {
@@ -42,7 +42,6 @@ export const scheduleApis = {
       courseName: string,
       schedule: '1' | '2' | '3',
       amount: number,
-      roomid: number,
       duration: number,
       accessToken: string
    ) => {
@@ -52,7 +51,6 @@ export const scheduleApis = {
             courseName,
             schedule,
             amount,
-            roomid,
             duration,
          },
          {
@@ -94,6 +92,13 @@ export const scheduleApis = {
    },
    getHome: (accessToken: string) => {
       return axios.get(`${BASE_API_URL}home`, {
+         headers: {
+            authorization: `Bearer ${accessToken}`,
+         },
+      });
+   },
+   getSchedule: (accessToken: string) => {
+      return axios.get<Array<ISchedule>>(`${BASE_API_URL}room/schedule`, {
          headers: {
             authorization: `Bearer ${accessToken}`,
          },

@@ -1,5 +1,5 @@
 import Layout from 'components/Layout';
-import { Course, Home, Login, Room, Signup } from 'pages';
+import { Calendar, Course, Home, Login, Room, Signup } from 'pages';
 import ForgotPassword from 'pages/FogotPassword';
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
@@ -32,6 +32,14 @@ function App() {
                element={
                   <Layout>
                      <Course />
+                  </Layout>
+               }
+            />
+            <Route
+               path="/calendar"
+               element={
+                  <Layout>
+                     <Calendar />
                   </Layout>
                }
             />
