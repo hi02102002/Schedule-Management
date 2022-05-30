@@ -2,7 +2,7 @@ import { Button, message, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { userSelector } from 'features/auth';
 import { coursesSelector, getCourses, removeCourse } from 'features/course';
-import { getRooms, roomsSelector } from 'features/room';
+import { getRooms } from 'features/room';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { ICourse } from 'shared/types';
@@ -10,7 +10,6 @@ import ModalCourse from './ModalCourse';
 
 const Course = () => {
    const { courses } = useAppSelector(coursesSelector);
-   const { rooms } = useAppSelector(roomsSelector);
    const user = useAppSelector(userSelector);
    const dispatch = useAppDispatch();
    const [loading, setLoading] = useState<boolean>(false);
@@ -22,28 +21,23 @@ const Course = () => {
       {
          title: 'Id',
          dataIndex: 'id',
+         key: 'id',
       },
       {
          title: 'Name',
          dataIndex: 'courseName',
+         key: 'courseName',
       },
       {
          title: 'Amount',
          dataIndex: 'amount',
+         key: 'amount',
       },
       {
          title: 'Duration',
          dataIndex: 'duration',
          render: (_, record) => {
             return <p>{record.duration} week</p>;
-         },
-      },
-      {
-         title: 'Room name',
-         dataIndex: 'roomName',
-         render: (_, record) => {
-            const roomName = rooms.find((_room) => _room.id === record.roomid);
-            return roomName?.roomName;
          },
       },
       {
@@ -54,8 +48,8 @@ const Course = () => {
                return <p>Not enough quantity</p>;
             }
 
-            if (record.amount >= 15 && !record.isSchedule) {
-               return <p>Planning</p>;
+            if (record.isScheduled) {
+               return <p>Planned</p>;
             }
 
             return <p>Planned</p>;
@@ -65,7 +59,7 @@ const Course = () => {
          title: 'Action',
          dataIndex: 'action',
          render: (_, record) => {
-            if (record.amount >= 15 && record.isSchedule) {
+            if (record.isScheduled) {
                return <p>Can't edit or remove</p>;
             }
             return (
@@ -139,39 +133,6 @@ const Course = () => {
          </div>
          <div>
             <Table
-               rowSelection={{
-                  type: 'checkbox',
-                  getCheckboxProps: (record) => {
-                     if (record.amount < 15) {
-                        return {
-                           disabled: true,
-                           id: record.id.toString(),
-                        };
-                     }
-
-                     if (record.amount >= 15 && !record.isSchedule) {
-                        return {
-                           disabled: false,
-                           id: record.id.toString(),
-                        };
-                     }
-
-                     return {
-                        disabled: true,
-                        id: record.id.toString(),
-                     };
-                  },
-                  onChange: (
-                     selectedRowKeys: React.Key[],
-                     selectedRows: ICourse[]
-                  ) => {
-                     console.log(
-                        `selectedRowKeys: ${selectedRowKeys}`,
-                        'selectedRows: ',
-                        selectedRows
-                     );
-                  },
-               }}
                dataSource={courses}
                columns={columns}
                loading={loading}

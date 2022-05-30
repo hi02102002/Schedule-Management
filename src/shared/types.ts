@@ -26,7 +26,7 @@ export interface ICourse {
    roomid?: number;
    id: number;
    duration: number;
-   isSchedule: boolean;
+   isScheduled: boolean;
    createdDate?: string;
 }
 

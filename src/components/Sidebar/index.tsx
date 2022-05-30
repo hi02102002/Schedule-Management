@@ -1,11 +1,27 @@
 import { SIDEBAR } from 'constant';
-import { logout } from 'features/auth';
-import { useAppDispatch } from 'hooks';
-import React from 'react';
+import { logout, userSelector } from 'features/auth';
+import { useAppDispatch, useAppSelector } from 'hooks';
+import jwtDecode, { JwtPayload } from 'jwt-decode';
+import React, { useEffect } from 'react';
 import { AiOutlineLogout } from 'react-icons/ai';
 import { NavLink } from 'react-router-dom';
 const Sidebar = () => {
    const dispatch = useAppDispatch();
+   const user = useAppSelector(userSelector);
+
+   useEffect(() => {
+      const { exp } = jwtDecode<JwtPayload>(user?.accessToken as string);
+      const timer = setInterval(() => {
+         if ((exp as number) < Date.now() / 1000) {
+            dispatch(logout());
+         }
+      }, 500);
+
+      return () => {
+         clearInterval(timer);
+      };
+   }, [dispatch, user?.accessToken]);
+
    return (
       <aside className="w-[230px] h-[calc(100vh_-_60px)] border border-t-0">
          <div className="py-2">
