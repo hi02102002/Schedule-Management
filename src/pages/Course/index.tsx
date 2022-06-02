@@ -34,12 +34,46 @@ const Course = () => {
          key: 'amount',
       },
       {
+         title: 'Date start',
+         dataIndex: 'startDate',
+         key: 'startDate',
+      },
+      {
+         title: 'Date end',
+         dataIndex: 'endDate',
+         key: 'endDate',
+      },
+      {
          title: 'Duration',
-         dataIndex: 'duration',
+         dataIndex: 'Duration',
+         key: 'duration',
          render: (_, record) => {
-            return <p>{record.duration} week</p>;
+            return (
+               (new Date(record.endDate).getTime() -
+                  new Date(record.startDate).getTime()) /
+                  (1000 * 3600 * 24) /
+                  7 +
+               ' Week'
+            );
          },
       },
+      {
+         title: 'Type',
+         dataIndex: 'type',
+         key: 'type',
+         render: (value, record) => {
+            if (record.schedule === '1') {
+               return '2-4-6';
+            }
+
+            if (record.schedule === '2') {
+               return '3-5-7';
+            }
+
+            return 'Full week';
+         },
+      },
+
       {
          title: 'Status',
          dataIndex: 'status',

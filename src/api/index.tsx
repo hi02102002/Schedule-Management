@@ -42,7 +42,8 @@ export const scheduleApis = {
       courseName: string,
       schedule: '1' | '2' | '3',
       amount: number,
-      duration: number,
+      startDate: string,
+      endDate: string,
       accessToken: string
    ) => {
       return axios.post<IRes<ICourse>>(
@@ -51,7 +52,8 @@ export const scheduleApis = {
             courseName,
             schedule,
             amount,
-            duration,
+            startDate,
+            endDate,
          },
          {
             headers: {

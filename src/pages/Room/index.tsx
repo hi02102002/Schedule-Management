@@ -30,39 +30,39 @@ const Room = () => {
          dataIndex: 'capacity',
          key: 'capacity',
       },
-      {
-         title: 'Action',
-         dataIndex: 'action',
-         render: (_, record) => {
-            return (
-               <div className="flex items-center gap-4">
-                  <Button>Edit</Button>
-                  <Button
-                     className="!bg-red-500 !border-0 !text-white"
-                     onClick={async () => {
-                        const action = await dispatch(
-                           removeRoom({
-                              id: record.id,
-                              accessToken: user?.accessToken as string,
-                           })
-                        );
+      // {
+      //    title: 'Action',
+      //    dataIndex: 'action',
+      //    render: (_, record) => {
+      //       return (
+      //          <div className="flex items-center gap-4">
+      //             <Button>Edit</Button>
+      //             <Button
+      //                className="!bg-red-500 !border-0 !text-white"
+      //                onClick={async () => {
+      //                   const action = await dispatch(
+      //                      removeRoom({
+      //                         id: record.id,
+      //                         accessToken: user?.accessToken as string,
+      //                      })
+      //                   );
 
-                        if (removeRoom.fulfilled.match(action)) {
-                           message.success('Remove room successfully');
-                        }
+      //                   if (removeRoom.fulfilled.match(action)) {
+      //                      message.success('Remove room successfully');
+      //                   }
 
-                        if (removeRoom.rejected.match(action)) {
-                           message.error(action.payload);
-                        }
-                     }}
-                  >
-                     Remove
-                  </Button>
-               </div>
-            );
-         },
-         width: 240,
-      },
+      //                   if (removeRoom.rejected.match(action)) {
+      //                      message.error(action.payload);
+      //                   }
+      //                }}
+      //             >
+      //                Remove
+      //             </Button>
+      //          </div>
+      //       );
+      //    },
+      //    width: 240,
+      // },
    ];
 
    useEffect(() => {
@@ -86,14 +86,14 @@ const Room = () => {
       <div>
          <div className="mb-4 flex items-center justify-between">
             <Typography.Title level={3}>Room</Typography.Title>
-            <Button
+            {/* <Button
                className="!bg-[#ff9b44] !border-0 !text-white"
                onClick={() => {
                   setIsModalVisible(true);
                }}
             >
                Add room
-            </Button>
+            </Button> */}
          </div>
          <div>
             <Table

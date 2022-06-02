@@ -23,11 +23,10 @@ export interface ICourse {
    courseName: string;
    schedule: '1' | '2' | '3';
    amount: number;
-   roomid?: number;
    id: number;
-   duration: number;
    isScheduled: boolean;
-   createdDate?: string;
+   startDate: string;
+   endDate: string;
 }
 
 export interface ISchedule {

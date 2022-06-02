@@ -1,14 +1,13 @@
 import ACalendar from '@fullcalendar/react';
 import Grid from '@fullcalendar/daygrid'; // a plugin!
-import React, { useEffect, useState } from 'react';
 import { scheduleApis } from 'api';
-import { useAppSelector } from 'hooks';
 import { userSelector } from 'features/auth';
+import { useAppSelector } from 'hooks';
+import React, { useEffect, useState } from 'react';
 import { ICourse } from 'shared/types';
 
 const dateOfWeek = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
 
-const WEEKEND = 7;
 const EVEN = '1';
 const OOD = '2';
 const FULL = '3';
@@ -23,10 +22,13 @@ const getEvent = (
       date: string;
    }> = [];
    if (_course) {
-      const dateStart = new Date(_course?.createdDate as string).getDate();
-      const dateEnd = dateStart + _course.duration * WEEKEND;
-      for (let date = dateStart; date <= dateEnd; date++) {
-         const createdDate = new Date(_course?.createdDate as string);
+      const dateStart = new Date(_course.startDate as string).getDate();
+      const distanceDate =
+         (new Date(_course.endDate).getTime() -
+            new Date(_course.startDate).getTime()) /
+         (1000 * 3600 * 24);
+      for (let date = dateStart; date <= dateStart + distanceDate; date++) {
+         const createdDate = new Date(_course?.startDate as string);
          createdDate.setDate(dateStart + (date - dateStart));
          const _date = dateOfWeek[createdDate.getDay()];
          const ev = {
@@ -43,7 +45,6 @@ const getEvent = (
                events.push(ev);
             }
          }
-
          if (_course.schedule === FULL) {
             if (_date !== 'CN') {
                events.push(ev);
@@ -64,31 +65,37 @@ const Calendar = () => {
          scheduleApis
             .getSchedule(user.accessToken)
             .then(({ data: _schedules }) => {
-               console.log(_schedules);
-               const events: any[] = _schedules.map((_schedule, _index) => {
-                  let _event;
+               const events: any[] = [];
+
+               for (let i = 0; i < _schedules.length; i++) {
+                  const _schedule = _schedules[i];
                   if (_schedule.lichChan.length > 0) {
                      for (let _i = 0; _i < _schedule.lichChan.length; _i++) {
-                        _event = getEvent(
-                           _schedule.lichChan[_i],
-                           _schedule.roomName,
-                           _schedule.lichChan
+                        events.push(
+                           getEvent(
+                              _schedule.lichChan[_i],
+                              _schedule.roomName,
+                              _schedule.lichChan
+                           )
                         );
                      }
                   }
-
                   if (_schedule.lichLe.length > 0) {
                      for (let _i = 0; _i < _schedule.lichLe.length; _i++) {
-                        _event = getEvent(
-                           _schedule.lichLe[_i],
-                           _schedule.roomName,
-                           _schedule.lichLe
-                        );
+                        if (!(_schedule.lichLe[_i].schedule === '3')) {
+                           events.push(
+                              getEvent(
+                                 _schedule.lichLe[_i],
+                                 _schedule.roomName,
+                                 _schedule.lichLe
+                              )
+                           );
+                        }
                      }
                   }
+               }
 
-                  return _event;
-               });
+               console.log(events);
 
                setEvs(events.filter((_event) => _event !== undefined).flat());
             })

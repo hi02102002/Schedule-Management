@@ -1,11 +1,31 @@
-import { Form, Input, InputNumber, message, Modal, Select } from 'antd';
+import {
+   DatePicker,
+   Form,
+   Input,
+   InputNumber,
+   message,
+   Modal,
+   Select,
+} from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import { userSelector } from 'features/auth';
 import { addCourse, editCourse } from 'features/course';
 import { roomsSelector } from 'features/room';
 import { useAppDispatch, useAppSelector } from 'hooks';
-import React, { useEffect, useState } from 'react';
+import moment from 'moment';
+import React, { useState } from 'react';
 import { ICourse } from 'shared/types';
+
+const covertDate = (date: Date): string => {
+   const _date = date.getDate();
+   const _year = date.getFullYear();
+   const _month = date.getMonth() + 1;
+
+   return `${_year}-${_month >= 10 ? _month : `0${_month}`}-${
+      _date >= 10 ? _date : `0${_date}`
+   }`;
+};
+
 interface Props {
    isModalVisible: boolean;
    onCancel?: () => void;
@@ -18,22 +38,7 @@ const ModalCourse: React.FC<Props> = (props) => {
    const user = useAppSelector(userSelector);
    const [loading, setLoading] = useState<boolean>(false);
    const { rooms } = useAppSelector(roomsSelector);
-   const [roomSelect, setRoomSelect] = useState<string>(
-      props.value?.roomid?.toString() || ''
-   );
    const [capacityRoom, setCapacityRoom] = useState<number>(15);
-
-   useEffect(() => {
-      if (roomSelect.trim().length > 0) {
-         const capacity = rooms.find(
-            (_room) => _room.id === +roomSelect
-         )?.capacity;
-
-         if (capacity) {
-            setCapacityRoom(capacity);
-         }
-      }
-   }, [roomSelect, rooms]);
 
    return (
       //@ts-ignore
@@ -42,7 +47,6 @@ const ModalCourse: React.FC<Props> = (props) => {
          onCancel={() => {
             form.resetFields();
             setCapacityRoom(1);
-            setRoomSelect('');
             props.onCancel && props.onCancel();
          }}
          title="Add course"
@@ -57,6 +61,13 @@ const ModalCourse: React.FC<Props> = (props) => {
             layout="vertical"
             form={form}
             onFinish={async (values) => {
+               const dateStart = moment(values.dateStart).toDate();
+               const dateEnd = new Date(dateStart);
+               dateEnd.setDate(
+                  moment(values.dateStart).toDate().getDate() +
+                     +values.duration * 7
+               );
+               console.log({ dateStart, dateEnd: dateEnd.toDateString() });
                if (props.type === 'ADD') {
                   setLoading(true);
                   const action = await dispatch(
@@ -65,7 +76,8 @@ const ModalCourse: React.FC<Props> = (props) => {
                         amount: +values.amount,
                         schedule: values.schedule,
                         accessToken: user?.accessToken as string,
-                        duration: +values.duration,
+                        startDate: covertDate(dateStart),
+                        endDate: covertDate(dateEnd),
                      })
                   );
                   if (addCourse.fulfilled.match(action)) {
@@ -73,7 +85,6 @@ const ModalCourse: React.FC<Props> = (props) => {
                      message.success('Add course successfully');
                      form.resetFields();
                      setCapacityRoom(1);
-                     setRoomSelect('');
                      props.onCancel && props.onCancel();
                   }
 
@@ -99,7 +110,6 @@ const ModalCourse: React.FC<Props> = (props) => {
                      message.success('Update course successfully');
                      form.resetFields();
                      setCapacityRoom(1);
-                     setRoomSelect('');
                      props.onCancel && props.onCancel();
                   }
 
@@ -112,8 +122,8 @@ const ModalCourse: React.FC<Props> = (props) => {
             initialValues={{
                courseName: props.value?.courseName || '',
                schedule: props.value?.schedule || '1',
-               amount: props.value?.amount || 15,
-               duration: props.value?.duration || '2',
+               amount: props.value?.amount || 1,
+               duration: '2',
             }}
          >
             <Form.Item
@@ -127,6 +137,14 @@ const ModalCourse: React.FC<Props> = (props) => {
                name="courseName"
             >
                <Input placeholder="Course name" />
+            </Form.Item>
+            <Form.Item label="Date start" name="dateStart">
+               <DatePicker
+                  className="w-full"
+                  disabledDate={(current) =>
+                     current.isBefore(moment().subtract(1, 'day'))
+                  }
+               />
             </Form.Item>
 
             <Form.Item
@@ -160,34 +178,6 @@ const ModalCourse: React.FC<Props> = (props) => {
                   <Select.Option value="3">3 week</Select.Option>
                </Select>
             </Form.Item>
-            {/* <Form.Item
-               label="Room"
-               rules={[
-                  {
-                     required: true,
-                     message: 'Please enter room',
-                  },
-               ]}
-               name="roomid"
-            >
-               <Select
-                  onChange={(value) => {
-                     setRoomSelect(value);
-                  }}
-                  value={roomSelect}
-               >
-                  {rooms.map((_room) => {
-                     return (
-                        <Select.Option
-                           key={_room.id}
-                           value={_room.id.toString()}
-                        >
-                           {_room.roomName}
-                        </Select.Option>
-                     );
-                  })}
-               </Select>
-            </Form.Item> */}
             <Form.Item
                label={`Amount (Max: 40)`}
                rules={[
@@ -205,7 +195,7 @@ const ModalCourse: React.FC<Props> = (props) => {
             >
                <InputNumber
                   placeholder="Amount"
-                  min={15}
+                  min={0}
                   max={40}
                   step={1}
                   value={capacityRoom}

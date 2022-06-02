@@ -17,7 +17,8 @@ export const addCourse = createAsyncThunk<
       schedule: '1' | '2' | '3';
       amount: number;
       accessToken: string;
-      duration: number;
+      startDate: string;
+      endDate: string;
    },
    {
       rejectValue: string;
@@ -25,15 +26,19 @@ export const addCourse = createAsyncThunk<
 >(
    'course/addCourse',
    async (
-      { amount, courseName, schedule, accessToken, duration },
+      { amount, courseName, schedule, accessToken, endDate, startDate },
       { rejectWithValue }
    ) => {
+      // createdDate
+      // const dateEnd=
+
       try {
          const { data } = await scheduleApis.addCourse(
             courseName,
             schedule,
             amount,
-            duration,
+            startDate,
+            endDate,
             accessToken
          );
          return data.data;

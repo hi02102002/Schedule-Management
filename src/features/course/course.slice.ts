@@ -24,6 +24,17 @@ const course = createSlice({
          })
          .addCase(addCourse.fulfilled, (state, action) => {
             state.courses.push(action.payload);
+            // state.courses.sort((a, b) => {
+            //    if (a.duration > b.duration) {
+            //       return 1;
+            //    }
+
+            //    if (a.duration === b.duration && a.amount > b.amount) {
+            //       return 1;
+            //    }
+
+            //    return 0;
+            // });
          })
          .addCase(editCourse.fulfilled, (state, action) => {
             const index = state.courses.findIndex(
