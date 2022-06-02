@@ -1,7 +1,7 @@
-import { Button, message, Table, Typography } from 'antd';
+import { Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { userSelector } from 'features/auth';
-import { getRooms, removeRoom, roomsSelector } from 'features/room';
+import { getRooms, roomsSelector } from 'features/room';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { IRoom } from 'shared/types';
