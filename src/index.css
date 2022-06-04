@@ -3,6 +3,12 @@
 @tailwind utilities;
 @import 'antd/dist/antd.css';
 
+@layer base {
+   body {
+      @apply min-h-screen;
+   }
+}
+
 .page-title {
    @apply text-3xl font-medium;
 }

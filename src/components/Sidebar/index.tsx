@@ -23,7 +23,7 @@ const Sidebar = () => {
    }, [dispatch, user?.accessToken]);
 
    return (
-      <aside className="w-[230px] h-[calc(100vh_-_60px)] border border-t-0">
+      <aside className="w-[230px] h-[calc(100vh_-_60px)] fixed left-0 bottom-0 border border-t-0">
          <div className="py-2">
             <ul className="flex flex-col">
                {SIDEBAR.map((item) => {
