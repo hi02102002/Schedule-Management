@@ -10,7 +10,6 @@ import {
 import { useForm } from 'antd/lib/form/Form';
 import { userSelector } from 'features/auth';
 import { addCourse, editCourse } from 'features/course';
-import { roomsSelector } from 'features/room';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import moment from 'moment';
 import React, { useState } from 'react';
@@ -37,7 +36,6 @@ const ModalCourse: React.FC<Props> = (props) => {
    const dispatch = useAppDispatch();
    const user = useAppSelector(userSelector);
    const [loading, setLoading] = useState<boolean>(false);
-   const { rooms } = useAppSelector(roomsSelector);
    const [capacityRoom, setCapacityRoom] = useState<number>(15);
 
    return (

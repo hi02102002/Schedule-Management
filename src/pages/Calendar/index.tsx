@@ -95,8 +95,6 @@ const Calendar = () => {
                   }
                }
 
-               console.log(events);
-
                setEvs(events.filter((_event) => _event !== undefined).flat());
             })
             .catch((error) => {
